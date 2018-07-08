@@ -30,9 +30,10 @@ import retrofit2.Response;
 public class AddDialog extends BottomSheetDialogFragment implements MainActivity.CameraListener{
     public static final String COORDS = "COORDS";
     View main_view;
-    int circle_radius = 0;
+    int circle_radius = 200;
     MainActivity activity;
-    EditText edit_text;
+    EditText edit_text_adress;
+    EditText edit_text_description;
     ImageButton image;
     GeoCoordinate coords;
     boolean camera_intent = false;
@@ -75,7 +76,7 @@ public class AddDialog extends BottomSheetDialogFragment implements MainActivity
                 dismiss();
             }
         });
-        edit_text = main_view.findViewById(R.id.dialog_address);
+        edit_text_adress = main_view.findViewById(R.id.dialog_address);
         getAddress();
         final TextView radius = main_view.findViewById(R.id.dialog_radius_textview);
         activity = (MainActivity) getActivity();
@@ -84,7 +85,7 @@ public class AddDialog extends BottomSheetDialogFragment implements MainActivity
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                circle_radius = progress * 50;
+                circle_radius = 220 + progress * 10;
                 radius.setText(circle_radius + " м");
             }
 
@@ -98,6 +99,7 @@ public class AddDialog extends BottomSheetDialogFragment implements MainActivity
 
             }
         });
+        edit_text_description = main_view.findViewById(R.id.dialog_description);
         image = main_view.findViewById(R.id.dialog_add_photo);
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,8 +117,9 @@ public class AddDialog extends BottomSheetDialogFragment implements MainActivity
         main_view.findViewById(R.id.dialog_add_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = edit_text.getText().toString();
-                Problem problem = new Problem(s,coords,circle_radius,getResources().getDrawable(R.drawable.photo),0);
+                String s = edit_text_adress.getText().toString();
+                String s_d = edit_text_description.getText().toString();
+                Problem problem = new Problem(s_d,coords,circle_radius,getResources().getDrawable(R.drawable.photo),0);
                 activity.addProblem(problem);
                 dismiss();
             }
@@ -133,7 +136,7 @@ public class AddDialog extends BottomSheetDialogFragment implements MainActivity
                     @Override
                     public void onResponse(Call<PostModel> call, Response<PostModel> response) {
                         Address address = response.body().getResponse().getView().get(0).getResult().get(0).getLocation().getAddress();
-                        edit_text.setText(address.getLabel());
+                        edit_text_adress.setText(address.getLabel());
 
                     }
 
